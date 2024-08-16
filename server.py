@@ -1,9 +1,9 @@
-#! /usr/bin/env pythonp3
+#! /usr/bin/env python3
 
 import socket, sys, re, os, time
 sys.path.append("../lib")     # for params
-import params
-from buf import BufferedFdReader, BufferedFdWriter
+from lib import params
+import buf
 
 switchesVarDefaults = (
     (('-l', '--listenPort'), 'listenPort', 50001),
@@ -51,7 +51,7 @@ listenSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 # accept will block for no more than 5s
 listenSock.settimeout(5)
 # bind listener socket to port
-listenSock.vind((listenAddr, listenPort))
+listenSock.bind((listenAddr, listenPort))
 #set state to listen
 listenSock.listen(1)           # allow only one outstanding request
 
@@ -62,7 +62,8 @@ while True:
     # reap zombie children (if  any)
     while pidAddr.keys():
         # Check for exited children(zombies). If none, don't block (hang)
-        if (waitResult := os.waitid(os.P_ALL, 0, os.WNOHANG | os.WEXITED)):
+        waitResult = os.waitid(os.P_ALL, 0, os.WNOHANG | os.WEXITED)
+        if (waitResult):
             zPid, zStatus = waitResult.si_pid, waitResult.si_status
             print(f"""zombie reaped:
             \tpid={zPid}, status={zStatus}
