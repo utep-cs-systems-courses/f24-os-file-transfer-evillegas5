@@ -3,6 +3,7 @@
 import socket, sys, re, os, time
 sys.path.append("../lib")     # for params
 import params
+from buf import BufferedFdReader, BufferedFdWriter
 
 switchesVarDefaults = (
     (('-l', '--listenPort'), 'listenPort', 50001),
